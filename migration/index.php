@@ -732,9 +732,12 @@ class MigrationDatabaseStep extends Step
             $this->successfulMiration = @MigrationRunner::runMigrations();
         }
 
-        // update page tree
-        if($this->successfulMiration){
+        // after migration
+        if($this->successfulMiration) {
+            // update page tree
             Page::getTreeManager()->refresh();
+            // remove log
+            DB::query("DROP TABLE " . DB::escIdt('phinxlog'));
         }
 
     }
