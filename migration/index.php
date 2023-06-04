@@ -6,6 +6,7 @@ use Kuria\Debug\Output;
 use Sunlight\Core;
 use Sunlight\Database\Database as DB;
 use Sunlight\Database\DatabaseException;
+use Sunlight\Page\Page;
 use Sunlight\Util\Form;
 use Sunlight\Util\Request;
 use Symfony\Component\Yaml\Yaml;
@@ -730,6 +731,12 @@ class MigrationDatabaseStep extends Step
         if (empty($this->errors)) {
             $this->successfulMiration = @MigrationRunner::runMigrations();
         }
+
+        // update page tree
+        if($this->successfulMiration){
+            Page::getTreeManager()->refresh();
+        }
+
     }
 
     function isComplete(): bool

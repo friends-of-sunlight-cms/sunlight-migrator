@@ -8,17 +8,7 @@ class UpdatePagesData extends AbstractMigration
     {
         $prefixedTableName = $this->getAdapter()->getAdapterTableName('_page');
 
-        $this->getQueryBuilder()
-            ->update($prefixedTableName)
-            ->set('node_parent', 'NULL')
-            ->where(['node_parent' => 0])
-            ->execute();
-
-        $this->getQueryBuilder()
-            ->update($prefixedTableName)
-            ->set('node_parent', 'NULL')
-            ->where(['node_parent' => -1])
-            ->execute();
+        $this->query("UPDATE " . $prefixedTableName . " SET `node_parent`=NULL WHERE `node_parent`=0 OR `node_parent`=-1");
 
         $this->getQueryBuilder()
             ->update($prefixedTableName)
