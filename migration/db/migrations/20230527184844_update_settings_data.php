@@ -57,6 +57,7 @@ class UpdateSettingsData extends AbstractMigration
                 ['var' => 'adminscheme_dark', 'val' => '0', 'preload' => 1, 'web' => 0, 'admin' => 1],
                 ['var' => 'log_level', 'val' => '5', 'preload' => 1, 'web' => 1, 'admin' => 1],
                 ['var' => 'log_retention', 'val' => '30', 'preload' => 1, 'web' => 1, 'admin' => 1],
+                ['var' => 'date_format', 'val' => 'j.n.Y', 'preload' => 1, 'web' => 1, 'admin' => 1],
             ])
             ->saveData();
 
