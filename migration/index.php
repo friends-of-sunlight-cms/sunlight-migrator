@@ -65,6 +65,8 @@ abstract class Labels
 
             'language.title' => 'Jazyk / Language',
             'language.text' => 'Choose a language / zvolte jazyk:',
+
+            'migration.button.processing' => '...', // JS fallback
         ],
 
         // czech
@@ -104,6 +106,7 @@ abstract class Labels
             'migration.confirmation' => 'Migrace databáze',
             'migration.confirmation.text' => 'Pro případ neúspěchu migrace, je vhodné zazálohovat databázi před samotným spuštěním.',
             'migration.confirmation.allow' => 'rozumím, zahájit migraci databáze',
+            'migration.button.processing' => 'Zpracovávám...',
 
 
             'complete.title' => 'Hotovo',
@@ -151,6 +154,7 @@ abstract class Labels
             'migration.confirmation' => 'Database migration',
             'migration.confirmation.text' => 'In case the migration fails, it is advisable to back up the database before the actual launch.',
             'migration.confirmation.allow' => 'I understand, start the database migration',
+            'migration.button.processing' => 'Processing...',
 
             'complete.title' => 'Complete',
             'complete.whats_next' => 'What\'s next?',
@@ -322,9 +326,19 @@ class StepRunner
                     <a class="btn btn-lg" id="start-over" href="<?= Core::getBaseUrl() ?>/migration/"><?php Labels::render('step.reset') ?></a>
                 <?php endif ?>
                 <?php if ($step->isSubmittable()): ?>
-                    <input id="submit" name="step_submit" type="submit" value="<?php Labels::render('step.submit') ?>">
+                    <input id="submit" name="step_submit" type="submit" value="<?php Labels::render('step.submit') ?>" class="continue_<?=$step->getMainLabelKey(); ?>">
                     <input type="hidden" name="<?= $step->getFormKeyVar() ?>" value="1">
                     <input type="hidden" name="step_number" value="<?= $step->getNumber() ?>">
+                    <script type="application/javascript">
+                        const form = document.querySelector('form');
+                        function handleSubmit(event) {
+                            const button = form.querySelector('.continue_migration');
+                            button.disabled = true;
+                            button.value = '<?php Labels::render('migration.button.processing'); ?>';
+                            button.style.cursor = 'wait';
+                        }
+                        form.addEventListener('submit', handleSubmit);
+                    </script>
                 <?php endif ?>
             </p>
 
