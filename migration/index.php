@@ -8,12 +8,13 @@ use Sunlight\Database\Database as DB;
 use Sunlight\Database\DatabaseException;
 use Sunlight\Page\Page;
 use Sunlight\Util\Form;
-use Sunlight\Util\Request;
-use Symfony\Component\Yaml\Yaml;
+use Sunlight\Util\PhpTemplate;use Sunlight\Util\Request;
+use Sunlight\Util\StringGenerator;
 
 const CONFIG_PATH = __DIR__ . '/../config.php';
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/class/MigrationRunner.php';
+
 // bootstrap
 require __DIR__ . '/../system/bootstrap.php';
 Core::init('../', [
@@ -99,6 +100,7 @@ abstract class Labels
             'migration.text' => 'Tento krok provede migraci tabulek v databázi.',
             'migration.error.confirmation.required' => 'je nezbytné potvrdit zahájení migrace',
             'migration.error.completed' => 'Migrace již byla dokončena, tento krok nelze opakovat.',
+            'migration.error.dbversion' => 'Zahájení migrace není možné z důvodu používání starší verze databáze, která není podporována.',
             'migration.confirmation' => 'Migrace databáze',
             'migration.confirmation.text' => 'Pro případ neúspěchu migrace, je vhodné zazálohovat databázi před samotným spuštěním.',
             'migration.confirmation.allow' => 'rozumím, zahájit migraci databáze',
@@ -145,6 +147,7 @@ abstract class Labels
             'migration.text' => 'This step migrates the tables in the database.',
             'migration.error.confirmation.required' => 'it\'s necessary to confirm the start of migration',
             'migration.error.completed' => 'The migration has already been completed, this step cannot be repeated.',
+            'migration.error.dbversion' => 'Migration cannot be initiated due to an older version of the database that is not supported.',
             'migration.confirmation' => 'Database migration',
             'migration.confirmation.text' => 'In case the migration fails, it is advisable to back up the database before the actual launch.',
             'migration.confirmation.allow' => 'I understand, start the database migration',
@@ -522,11 +525,17 @@ class ConfigurationStep extends Step
         // load data
         $config = [
             'db.server' => trim(Request::post('config_db_server', '')),
-            'db.port' => (int)trim(Request::post('config_db_port', '')) ?: null,
+            'db.port' => (int) trim(Request::post('config_db_port', '')) ?: null,
             'db.user' => trim(Request::post('config_db_user', '')),
             'db.password' => trim(Request::post('config_db_password', '')),
             'db.name' => trim(Request::post('config_db_name', '')),
             'db.prefix' => trim(Request::post('config_db_prefix', '')),
+            'fallback_lang' => $this->vars['language'],
+            // I don't want to deal with it in the migrator
+            'secret' => trim(StringGenerator::generateString(64)),
+            'debug' => false,
+            'locale' => null,
+            'timezone' => null,
         ];
 
         // validate
@@ -564,31 +573,9 @@ class ConfigurationStep extends Step
 
         // generate config file
         if (empty($this->errors)) {
+            $configTemplate = PhpTemplate::fromFile(__DIR__ . '/../system/config_template.php');
 
-            $migratorConfig = [
-                'paths' => [
-                    'migrations' => '%%PHINX_CONFIG_DIR%%/db/migrations',
-                ],
-                'environments' => [
-                    'default_migration_table' => 'phinxlog',
-                    'default_database' => 'development',
-                    'development' => [
-                        'adapter' => 'mysql',
-                        'host' => $config['db.server'],
-                        'name' => $config['db.name'],
-                        'user' => $config['db.user'],
-                        'pass' => $config['db.password'],
-                        'port' => $config['db.port'],
-                        'table_prefix' => $config['db.prefix'],
-                        'charset' => 'utf8mb4',
-                        'collation' => 'utf8mb4_unicode_ci',
-                    ],
-                ],
-                'version_order' => 'creation',
-            ];
-
-            $yaml = Yaml::dump($migratorConfig);
-            if (@file_put_contents(__DIR__ . DIRECTORY_SEPARATOR . 'phinx.yaml', $yaml) !== false) {
+            if (@file_put_contents(CONFIG_PATH, $configTemplate->compile($config)) !== false) {
                 // reload
                 Config::load();
             } else {
@@ -708,7 +695,7 @@ class MigrationDatabaseStep extends Step
     /** @var array|null */
     private $existingTableNames;
     /** @var bool */
-    private $successfulMiration = false;
+    private $successfulMigration = false;
 
     function getMainLabelKey(): string
     {
@@ -718,6 +705,10 @@ class MigrationDatabaseStep extends Step
     protected function doSubmit(): void
     {
         $confirmedMigration = (bool)Request::post('confirm_migration', false);
+
+        if (!$this->checkMinimalDatabaseVersion()) {
+            $this->errors[] = 'dbversion';
+        }
 
         if ($this->isDatabaseMigrated()) {
             $this->errors[] = 'completed';
@@ -729,15 +720,21 @@ class MigrationDatabaseStep extends Step
 
         // migrate the database
         if (empty($this->errors)) {
-            $this->successfulMiration = @MigrationRunner::runMigrations();
+            // use database
+            DB::query('USE '. DB::escIdt(Config::$config['db.name']));
+
+            $migrationRunner = new MigrationRunner();
+            if(!$migrationRunner->isInstalled()){
+                $this->successfulMigration = $migrationRunner->install();
+            } else {
+                $this->successfulMigration = true;
+            }
         }
 
         // after migration
-        if($this->successfulMiration) {
+        if($this->successfulMigration) {
             // update page tree
             Page::getTreeManager()->refresh();
-            // remove log
-            DB::query("DROP TABLE " . DB::escIdt('phinxlog'));
         }
 
     }
@@ -746,18 +743,22 @@ class MigrationDatabaseStep extends Step
     {
         return
             parent::isComplete()
-            && $this->successfulMiration
+            && $this->successfulMigration
             && $this->isDatabaseMigrated()
             && $this->isDatabaseInstalled();
     }
 
     function run(): void
     {
+        $validDbVersion = $this->checkMinimalDatabaseVersion();
         ?>
-        <?php if ($this->isDatabaseMigrated()): ?>
+    <?php if (!$validDbVersion): ?>
+        <p class="msg warning"><?php Labels::render('migration.error.dbversion') ?></p>
+    <?php endif ?>
+    <?php if ($this->isDatabaseMigrated()): ?>
         <p class="msg warning"><?php Labels::render('migration.error.completed') ?></p>
     <?php endif ?>
-        <?php if (!$this->isDatabaseMigrated()): ?>
+        <?php if (!$this->isDatabaseMigrated() && $validDbVersion): ?>
         <fieldset>
             <legend><?php Labels::render('migration.confirmation') ?></legend>
             <p class="msg warning"><?php Labels::render('migration.confirmation.text') ?></p>
@@ -786,6 +787,19 @@ class MigrationDatabaseStep extends Step
         if (in_array($prefix . '_setting', $tables)) {
             $version = DB::result(DB::query('SELECT val FROM ' . DB::escIdt($prefix . '_setting') . ' WHERE var=' . DB::val('dbversion')));
             return ($version === '8.0.0');
+        }
+        return false;
+    }
+
+    private function checkMinimalDatabaseVersion(): bool
+    {
+        $prefix = Config::$config['db.prefix'];
+
+        DB::query('USE ' . DB::escIdt(Config::$config['db.name']));
+        $tables = DB::getTablesByPrefix($prefix);
+        if (in_array($prefix . '-settings', $tables)) {
+            $version = DB::result(DB::query('SELECT val FROM ' . DB::escIdt($prefix . '-settings') . ' WHERE var=' . DB::val('dbversion')));
+            return ($version === '7.5.3');
         }
         return false;
     }

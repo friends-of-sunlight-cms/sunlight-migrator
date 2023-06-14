@@ -1,0 +1,22 @@
+CREATE TABLE `sunlight_log` (
+   `id` varchar(36) NOT NULL,
+   `level` tinyint(4) NOT NULL,
+   `category` VARCHAR(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+   `time` bigint(20) NOT NULL,
+   `message` TEXT COLLATE utf8mb4_unicode_ci NOT NULL,
+   `method` VARCHAR(32) COLLATE utf8mb4_unicode_ci NULL,
+   `url` VARCHAR(2048) COLLATE utf8mb4_unicode_ci NULL,
+   `ip` VARCHAR(45) COLLATE utf8mb4_unicode_ci NULL,
+   `user_agent` VARCHAR(255) COLLATE utf8mb4_unicode_ci NULL,
+   `user_id` int(11) DEFAULT NULL,
+   `context` TEXT COLLATE utf8mb4_unicode_ci NULL,
+   PRIMARY KEY (`id`),
+   KEY `level` (`level`),
+   KEY `category` (`category`),
+   KEY `time` (`time`),
+   KEY `message` (`message`(255)),
+   KEY `method` (`method`),
+   KEY `url` (`url`(255)),
+   KEY `ip` (`ip`),
+   KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
