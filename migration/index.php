@@ -706,15 +706,17 @@ class MigrationDatabaseStep extends Step
     {
         $confirmedMigration = (bool)Request::post('confirm_migration', false);
 
-        if (!$this->checkMinimalDatabaseVersion()) {
-            $this->errors[] = 'dbversion';
-        }
+        $isMigrated = $this->isDatabaseMigrated();
 
-        if ($this->isDatabaseMigrated()) {
+        if ($isMigrated) {
             $this->errors[] = 'completed';
         }
 
-        if (!$confirmedMigration) {
+        if (!$isMigrated && !$this->checkMinimalDatabaseVersion()) {
+            $this->errors[] = 'dbversion';
+        }
+
+        if (!$isMigrated && !$confirmedMigration) {
             $this->errors[] = 'confirmation.required';
         }
 
@@ -751,12 +753,13 @@ class MigrationDatabaseStep extends Step
     function run(): void
     {
         $validDbVersion = $this->checkMinimalDatabaseVersion();
+        $isMigrated = $this->isDatabaseMigrated();
         ?>
-    <?php if (!$validDbVersion): ?>
-        <p class="msg warning"><?php Labels::render('migration.error.dbversion') ?></p>
-    <?php endif ?>
-    <?php if ($this->isDatabaseMigrated()): ?>
+    <?php if ($isMigrated): ?>
         <p class="msg warning"><?php Labels::render('migration.error.completed') ?></p>
+    <?php endif ?>
+    <?php if (!$isMigrated && !$validDbVersion): ?>
+        <p class="msg warning"><?php Labels::render('migration.error.dbversion') ?></p>
     <?php endif ?>
         <?php if (!$this->isDatabaseMigrated() && $validDbVersion): ?>
         <fieldset>
