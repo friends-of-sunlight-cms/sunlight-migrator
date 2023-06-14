@@ -741,6 +741,11 @@ class MigrationDatabaseStep extends Step
 
     }
 
+    function isSubmittable(): bool
+    {
+        return !$this->isDatabaseMigrated() && $this->checkMinimalDatabaseVersion();
+    }
+
     function isComplete(): bool
     {
         return
