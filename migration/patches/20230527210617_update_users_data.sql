@@ -2,6 +2,11 @@ TRUNCATE TABLE `sunlight_user_activation`;
 
 UPDATE `sunlight_user` SET `publicname`=NULL WHERE publicname='';
 
+ALTER TABLE `sunlight_user`
+    ADD UNIQUE KEY (`username`),
+    ADD UNIQUE KEY (`publicname`),
+    ADD UNIQUE KEY (`email`);
+
 UPDATE `sunlight_user` SET `password`=CONCAT('md5_legacy:0:', `salt`, ':', `password`);
 ALTER TABLE `sunlight_user` DROP COLUMN `salt`;
 

@@ -28,7 +28,4 @@ ALTER TABLE `sunlight_user`
 ALTER TABLE `sunlight_user`
     DROP INDEX `username`,
     DROP INDEX `publicname`,
-    DROP INDEX `email`,
-    ADD  UNIQUE KEY (`username`),
-    ADD  UNIQUE KEY (`publicname`),
-    ADD  UNIQUE KEY (`email`);
+    DROP INDEX `email`;
