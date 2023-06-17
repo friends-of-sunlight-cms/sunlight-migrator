@@ -14,8 +14,8 @@ ALTER TABLE `sunlight_user` ADD COLUMN `migr_move` TINYINT(1) NOT NULL DEFAULT 0
 UPDATE `sunlight_user` SET `migr_move`=1 WHERE id=0;
 
 UPDATE `sunlight_user` SET `id`=(SELECT MAX(id)+1 FROM `sunlight_user`) WHERE id=0;
-UPDATE `sunlight_article` SET `author`=(SELECT id FROM `sunlight_user` WHERE migr_move=1) WHERE author=0;
 
+UPDATE `sunlight_article` SET `author`=(SELECT id FROM `sunlight_user` WHERE migr_move=1) WHERE author=0;
 UPDATE `sunlight_pm` SET `sender`=(SELECT id FROM `sunlight_user` WHERE migr_move=1) WHERE sender=0;
 UPDATE `sunlight_pm` SET `receiver`=(SELECT id FROM `sunlight_user` WHERE migr_move=1) WHERE receiver=0;
 UPDATE `sunlight_poll` SET `author`=(SELECT id FROM `sunlight_user` WHERE migr_move=1) WHERE author=0;
