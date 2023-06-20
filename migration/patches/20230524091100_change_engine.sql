@@ -12,3 +12,18 @@ ALTER TABLE `sunlight_shoutbox` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4
 ALTER TABLE `sunlight_setting` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE `sunlight_user_activation` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE `sunlight_user` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+ALTER TABLE `sunlight_article` ENGINE='InnoDB';
+ALTER TABLE `sunlight_box` ENGINE='InnoDB';
+ALTER TABLE `sunlight_user_group` ENGINE='InnoDB';
+ALTER TABLE `sunlight_gallery_image` ENGINE='InnoDB';
+ALTER TABLE `sunlight_iplog` ENGINE='InnoDB';
+ALTER TABLE `sunlight_pm` ENGINE='InnoDB';
+ALTER TABLE `sunlight_poll` ENGINE='InnoDB';
+ALTER TABLE `sunlight_post` ENGINE='InnoDB';
+ALTER TABLE `sunlight_redirect` ENGINE='InnoDB';
+ALTER TABLE `sunlight_page` ENGINE='InnoDB';
+ALTER TABLE `sunlight_shoutbox` ENGINE='InnoDB';
+ALTER TABLE `sunlight_setting` ENGINE='InnoDB';
+ALTER TABLE `sunlight_user_activation` ENGINE='InnoDB';
+ALTER TABLE `sunlight_user` ENGINE='InnoDB';
