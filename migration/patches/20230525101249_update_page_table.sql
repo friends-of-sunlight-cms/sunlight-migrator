@@ -28,7 +28,10 @@ ALTER TABLE `sunlight_page`
     DROP COLUMN `keywords`;
 
 ALTER TABLE `sunlight_page`
+    DROP INDEX `title_seo`,
+    DROP INDEX `autotitle`,
+    DROP INDEX `intersection`,
     ADD KEY (`show_heading`),
-    ADD KEY (`slug_abs`),
-    ADD KEY (`node_parent`),
-    ADD KEY (`slug`(16));
+    ADD KEY `slug_seo_abs` (`slug_abs`),
+    ADD KEY `slug_seo` (`slug`(16)),
+    ADD KEY (`node_parent`);

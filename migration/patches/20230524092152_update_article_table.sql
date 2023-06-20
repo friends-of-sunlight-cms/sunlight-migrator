@@ -18,6 +18,7 @@ ALTER TABLE `sunlight_article`
     CHANGE COLUMN `confirmed` `confirmed` TINYINT(1) NOT NULL DEFAULT 0,
     CHANGE COLUMN `showinfo` `showinfo` TINYINT(1) NOT NULL DEFAULT 1,
     CHANGE COLUMN `rateon` `rateon` TINYINT(1) NOT NULL DEFAULT 1,
+    CHANGE COLUMN `ratenum` `ratenum` INT(11) NOT NULL DEFAULT 0,
     CHANGE COLUMN `ratesum` `ratesum` INT(11) NOT NULL DEFAULT 0,
     CHANGE COLUMN `slug` `slug` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     DROP COLUMN `keywords`,

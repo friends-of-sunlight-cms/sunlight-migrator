@@ -50,4 +50,5 @@ ALTER TABLE `sunlight_user_group`
     CHANGE COLUMN `movetopics` `movetopics` TINYINT(1) NOT NULL DEFAULT 0,
     CHANGE COLUMN `artrate` `artrate` TINYINT(1) NOT NULL DEFAULT 0,
     CHANGE COLUMN `pollvote` `pollvote` TINYINT(1) NOT NULL DEFAULT 0,
-    DROP COLUMN `adminrestore`;
+    DROP COLUMN `adminrestore`,
+    DROP COLUMN `adminbans`;

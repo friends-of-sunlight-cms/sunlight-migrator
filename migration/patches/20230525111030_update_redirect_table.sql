@@ -4,7 +4,7 @@ ALTER TABLE `sunlight_redirect`
     ADD COLUMN `permanent` TINYINT(1) NOT NULL DEFAULT 0 AFTER `new`;
 
 ALTER TABLE `sunlight_redirect`
-    ADD KEY (`permanent`),
     DROP INDEX `old`,
-    ADD KEY (`old`(191));
+    ADD KEY (`old`(191)),
+    ADD KEY (`permanent`);
 

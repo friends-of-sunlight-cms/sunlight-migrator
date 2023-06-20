@@ -15,6 +15,7 @@ ALTER TABLE `sunlight_box`
     CHANGE COLUMN `class` `class` VARCHAR(255) COLLATE utf8mb4_unicode_ci NULL;
 
 ALTER TABLE `sunlight_box`
+    DROP INDEX `column`,
     ADD KEY (`slot`),
     ADD KEY (`level`),
     ADD KEY (`template`(191)),
