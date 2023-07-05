@@ -1,6 +1,7 @@
 ALTER TABLE `sunlight_article`
     CHANGE COLUMN `title_seo` `slug` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    CHANGE COLUMN `readed` `readnum` INT(11) NOT NULL DEFAULT 0;
+    CHANGE COLUMN `readed` `readnum` INT(11) NOT NULL DEFAULT 0,
+    CHANGE COLUMN `readnum` `view_count` INT(11) NOT NULL DEFAULT 0 AFTER `showinfo`;
 
 ALTER TABLE `sunlight_article`
     CHANGE COLUMN `title` `title` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,

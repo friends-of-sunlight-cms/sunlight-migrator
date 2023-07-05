@@ -26,6 +26,7 @@ UPDATE `sunlight_setting` SET `var`='default_template' WHERE `var`='template';
 UPDATE `sunlight_setting` SET `val`='default' WHERE `var`='default_template';
 UPDATE `sunlight_setting` SET `var`='antispamtimeout' WHERE `var`='postsendexpire';
 UPDATE `sunlight_setting` SET `var`='adminscheme_dark' WHERE `var`='adminscheme_mode';
+UPDATE `sunlight_setting` SET `var`='artviewexpire' WHERE `var`='artreadexpire';
 
 DELETE FROM `sunlight_setting` WHERE `var` IN ('printart', 'extend_enabled', 'ajaxfm', 'wysiwyg', 'codemirror', 'lightbox', 'url', 'banned', 'keywords', 'proxy_mode', 'rss', 'rsslimit', 'modrewrite', 'smileys', 'postsendexpire', 'adminscheme_mode');
 
