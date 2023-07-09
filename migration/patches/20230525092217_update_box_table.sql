@@ -10,7 +10,7 @@ ALTER TABLE `sunlight_box`
     ADD COLUMN `level` INT(11) NOT NULL DEFAULT 0 AFTER `public`,
     ADD COLUMN `template` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL AFTER `level`,
     ADD COLUMN `layout` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL AFTER `template`,
-    ADD COLUMN `page_ids` MEDIUMTEXT COLLATE utf8mb4_unicode_ci NULL AFTER `slot`,
+    ADD COLUMN `page_ids` TEXT COLLATE utf8mb4_unicode_ci NULL AFTER `slot`,
     ADD COLUMN `page_children` TINYINT(1) NOT NULL DEFAULT 0 AFTER `page_ids`,
     CHANGE COLUMN `class` `class` VARCHAR(255) COLLATE utf8mb4_unicode_ci NULL;
 
@@ -18,5 +18,5 @@ ALTER TABLE `sunlight_box`
     DROP INDEX `column`,
     ADD KEY (`slot`),
     ADD KEY (`level`),
-    ADD KEY (`template`(191)),
-    ADD KEY (`layout`(191));
+    ADD KEY (`template`),
+    ADD KEY (`layout`);

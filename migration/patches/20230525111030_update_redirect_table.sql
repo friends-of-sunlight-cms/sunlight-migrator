@@ -5,6 +5,6 @@ ALTER TABLE `sunlight_redirect`
 
 ALTER TABLE `sunlight_redirect`
     DROP INDEX `old`,
-    ADD KEY (`old`(191)),
+    ADD KEY (`old`),
     ADD KEY (`permanent`);
 

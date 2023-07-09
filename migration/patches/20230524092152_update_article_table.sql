@@ -6,9 +6,9 @@ ALTER TABLE `sunlight_article`
 ALTER TABLE `sunlight_article`
     CHANGE COLUMN `title` `title` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     CHANGE COLUMN `description` `description` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-    CHANGE COLUMN `perex` `perex` MEDIUMTEXT COLLATE utf8mb4_unicode_ci NOT NULL,
+    CHANGE COLUMN `perex` `perex` TEXT COLLATE utf8mb4_unicode_ci NOT NULL,
     CHANGE COLUMN `picture_uid` `picture_uid` VARCHAR(32) COLLATE utf8mb4_unicode_ci NULL,
-    CHANGE COLUMN `content` `content` LONGTEXT COLLATE utf8mb4_unicode_ci NOT NULL,
+    CHANGE COLUMN `content` `content` MEDIUMTEXT COLLATE utf8mb4_unicode_ci NOT NULL,
     CHANGE COLUMN `home2` `home2` INT(11) NOT NULL DEFAULT -1,
     CHANGE COLUMN `home3` `home3` INT(11) NOT NULL DEFAULT -1,
     CHANGE COLUMN `time` `time` BIGINT(20) NOT NULL,
@@ -27,6 +27,6 @@ ALTER TABLE `sunlight_article`
 
 ALTER TABLE `sunlight_article`
     DROP INDEX `title_seo`,
-    ADD KEY (`slug`(191));
+    ADD KEY `slug`;
 
 
