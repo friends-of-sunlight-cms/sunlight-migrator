@@ -21,6 +21,7 @@ ALTER TABLE `sunlight_page`
     ADD COLUMN `link_url` VARCHAR(255) COLLATE utf8mb4_unicode_ci NULL AFTER `link_new_window`,
     ADD COLUMN `layout` VARCHAR(255) COLLATE utf8mb4_unicode_ci NULL AFTER `link_url`,
     ADD COLUMN `layout_inherit` TINYINT(1) NOT NULL DEFAULT 0 AFTER `layout`,
+    ADD `search_content` text COLLATE 'utf8mb4_unicode_ci' NOT NULL AFTER `content`,
     CHANGE COLUMN `var1` `var1` INT(11) NULL,
     CHANGE COLUMN `var2` `var2` INT(11) NULL,
     CHANGE COLUMN `var3` `var3` INT(11) NULL,
@@ -33,5 +34,8 @@ ALTER TABLE `sunlight_page`
     DROP INDEX `intersection`,
     ADD KEY (`show_heading`),
     ADD KEY (`slug_abs`),
-    ADD KEY (`slug_seo`),
+    ADD KEY (`slug`),
     ADD KEY (`node_parent`);
+
+ALTER TABLE `sunlight_page`
+    ADD FULLTEXT `search` (`title`, `heading`, `description`, `search_content`);

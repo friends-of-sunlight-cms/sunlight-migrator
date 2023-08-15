@@ -6,4 +6,7 @@ ALTER TABLE `sunlight_gallery_image`
 
 ALTER TABLE `sunlight_gallery_image`
     DROP INDEX `full`,
-    ADD KEY (`full`),
+    ADD KEY (`full`);
+
+ALTER TABLE `sunlight_gallery_image`
+    ADD FULLTEXT `search` (`title`);

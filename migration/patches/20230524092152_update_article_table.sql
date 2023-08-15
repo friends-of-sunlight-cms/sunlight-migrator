@@ -1,7 +1,6 @@
 ALTER TABLE `sunlight_article`
     CHANGE COLUMN `title_seo` `slug` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    CHANGE COLUMN `readed` `readnum` INT(11) NOT NULL DEFAULT 0,
-    CHANGE COLUMN `readnum` `view_count` INT(11) NOT NULL DEFAULT 0 AFTER `showinfo`;
+    CHANGE COLUMN `readed` `view_count` INT(11) NOT NULL DEFAULT 0 AFTER `showinfo`;
 
 ALTER TABLE `sunlight_article`
     CHANGE COLUMN `title` `title` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -22,11 +21,10 @@ ALTER TABLE `sunlight_article`
     CHANGE COLUMN `ratenum` `ratenum` INT(11) NOT NULL DEFAULT 0,
     CHANGE COLUMN `ratesum` `ratesum` INT(11) NOT NULL DEFAULT 0,
     CHANGE COLUMN `slug` `slug` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    ADD `search_content` text COLLATE 'utf8mb4_unicode_ci' NOT NULL AFTER `content`,
     DROP COLUMN `keywords`,
     DROP COLUMN `infobox`;
 
-ALTER TABLE `sunlight_article`
-    DROP INDEX `title_seo`,
-    ADD KEY `slug`;
-
-
+ALTER TABLE `sunlight_article` DROP INDEX `title_seo`;
+ALTER TABLE `sunlight_article` ADD KEY (`slug`);
+ALTER TABLE `sunlight_article` ADD FULLTEXT `search` (`title`, `description`, `search_content`);

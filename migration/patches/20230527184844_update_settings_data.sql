@@ -17,7 +17,8 @@ INSERT INTO `sunlight_setting` (`var`, `val`, `preload`, `web`, `admin`) VALUES
    ('log_level', '5', 1, 1, 1),
    ('log_retention', '30', 1, 1, 1),
    ('date_format', 'j.n.Y', 1, 1, 1),
-   ('admin_index_log_since', '0', 0, 0, 0);
+   ('admin_index_log_since', '0', 0, 0, 0),
+   ('fulltext_content_limit', '65535', 0, 0, 0);
 
 UPDATE `sunlight_setting` SET `val`='' WHERE `var`='install_check';
 UPDATE `sunlight_setting` SET `var`='pretty_urls' WHERE `var`='modrewrite';
