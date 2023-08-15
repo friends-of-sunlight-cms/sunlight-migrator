@@ -7,8 +7,9 @@ use Sunlight\Core;
 use Sunlight\Database\Database as DB;
 use Sunlight\Database\DatabaseException;
 use Sunlight\Page\Page;
+use Sunlight\Util\ConfigurationFile;
 use Sunlight\Util\Form;
-use Sunlight\Util\PhpTemplate;use Sunlight\Util\Request;
+use Sunlight\Util\Request;
 use Sunlight\Util\StringGenerator;
 
 const CONFIG_PATH = __DIR__ . '/../config.php';
@@ -23,30 +24,14 @@ Core::init('../', [
     'debug' => true,
 ]);
 
-/**
- * Configuration
- */
-abstract class Config
-{
-    /** @var array|null */
-    static $config;
+// config
+$config = new ConfigurationFile(CONFIG_PATH);
+$defaults = require __DIR__ . '/../system/config_template.php';
+$defaults['secret'] = StringGenerator::generateString(64);
 
-    /**
-     * Attempt to load the configuration file
-     */
-    static function load(): void
-    {
-        if (is_file(CONFIG_PATH)) {
-            self::$config = require CONFIG_PATH;
-        }
-    }
-
-    /**
-     * See whether the configuration file is loaded
-     */
-    static function isLoaded(): bool
-    {
-        return self::$config !== null;
+foreach ($defaults as $key => $value) {
+    if (!$config->isDefined($key)) {
+        $config[$key] = $value;
     }
 }
 
@@ -369,6 +354,13 @@ abstract class Step
     protected $submitted = false;
     /** @var array */
     protected $errors = [];
+   /** @var ConfigurationFile */
+   protected $config;
+
+   function __construct(ConfigurationFile $config)
+   {
+       $this->config = $config;
+   }
 
     abstract function getMainLabelKey(): string;
 
@@ -470,18 +462,6 @@ abstract class Step
      */
     function postComplete(): void
     {
-    }
-
-    /**
-     * Get configuration value
-     */
-    protected function getConfig(string $key, $default = null)
-    {
-        if (Config::isLoaded() && array_key_exists($key, Config::$config)) {
-            return Config::$config[$key];
-        }
-
-        return $default;
     }
 }
 
@@ -587,12 +567,13 @@ class ConfigurationStep extends Step
 
         // generate config file
         if (empty($this->errors)) {
-            $configTemplate = PhpTemplate::fromFile(__DIR__ . '/../system/config_template.php');
+            foreach ($config as $key => $value) {
+                $this->config[$key] = $value;
+            }
 
-            if (@file_put_contents(CONFIG_PATH, $configTemplate->compile($config)) !== false) {
-                // reload
-                Config::load();
-            } else {
+            try {
+                $this->config->save();
+            } catch (\Throwable $e) {
                 $this->errors[] = ['write_failed', ['%config_path%' => CONFIG_PATH]];
             }
         }
@@ -600,13 +581,9 @@ class ConfigurationStep extends Step
 
     function isComplete(): bool
     {
-        if (
-            parent::isComplete()
-            && is_file(CONFIG_PATH)
-            && Config::isLoaded()
-        ) {
+        if (parent::isComplete() && is_file(CONFIG_PATH)) {
             try {
-                DB::connect(Config::$config['db.server'], Config::$config['db.user'], Config::$config['db.password'], '', Config::$config['db.port'], Config::$config['db.prefix']);
+                DB::connect($this->config['db.server'], $this->config['db.user'], $this->config['db.password'], '', $this->config['db.port'], $this->config['db.prefix']);
 
                 return true;
             } catch (DatabaseException $e) {
@@ -625,17 +602,17 @@ class ConfigurationStep extends Step
             <table>
                 <tr>
                     <th><?php Labels::render('config.db.server') ?></th>
-                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_server', $this->getConfig('db.server', 'localhost')) ?>></td>
+                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_server', $this->config['db.server']) ?>></td>
                     <td class="help"><?php Labels::render('config.db.server.help') ?></td>
                 </tr>
                 <tr>
                     <th><?php Labels::render('config.db.port') ?></th>
-                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_port', $this->getConfig('db.port')) ?>></td>
+                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_port', $this->config['db.port']) ?>></td>
                     <td class="help"><?php Labels::render('config.db.port.help') ?></td>
                 </tr>
                 <tr>
                     <th><?php Labels::render('config.db.user') ?></th>
-                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_user', $this->getConfig('db.user')) ?>></td>
+                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_user', $this->config['db.user']) ?>></td>
                     <td class="help"><?php Labels::render('config.db.user.help') ?></td>
                 </tr>
                 <tr>
@@ -645,41 +622,17 @@ class ConfigurationStep extends Step
                 </tr>
                 <tr>
                     <th><?php Labels::render('config.db.name') ?></th>
-                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_name', $this->getConfig('db.name')) ?>></td>
+                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_name', $this->config['db.name']) ?>></td>
                     <td class="help"><?php Labels::render('config.db.name.help') ?></td>
                 </tr>
                 <tr>
                     <th><?php Labels::render('config.db.prefix') ?></th>
-                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_prefix', $this->getConfig('db.prefix', 'sunlight')) ?>></td>
+                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_prefix', $this->config['db.prefix']) ?>></td>
                     <td class="help"><?php Labels::render('config.db.prefix.help') ?></td>
                 </tr>
             </table>
         </fieldset>
         <?php
-    }
-
-    /**
-     * Convert string representation of an array config to an array
-     */
-    private function getArrayConfigFromString(string $value): ?array
-    {
-        return preg_split('/\s*,\s*/', $value, -1, PREG_SPLIT_NO_EMPTY) ?: null;
-    }
-
-    /**
-     * Get string representation of an array config option
-     */
-    private function getArrayConfigAsString(string $key): string
-    {
-        if (!Config::isLoaded()) {
-            $value = null;
-        } else {
-            $value = $this->getConfig($key);
-        }
-
-        return $value !== null
-            ? implode(', ', $value)
-            : '';
     }
 }
 
@@ -737,7 +690,7 @@ class MigrationDatabaseStep extends Step
         // migrate the database
         if (empty($this->errors)) {
             // use database
-            DB::query('USE '. DB::escIdt(Config::$config['db.name']));
+            DB::query('USE '. DB::escIdt($this->config['db.name']));
 
             $migrationRunner = new MigrationRunner();
             if(!$migrationRunner->isInstalled()){
@@ -802,9 +755,9 @@ class MigrationDatabaseStep extends Step
 
     private function isDatabaseMigrated(): bool
     {
-        $prefix = Config::$config['db.prefix'];
+        $prefix = $this->config['db.prefix'];
 
-        DB::query('USE ' . DB::escIdt(Config::$config['db.name']));
+        DB::query('USE ' . DB::escIdt($this->config['db.name']));
         $tables = DB::getTablesByPrefix($prefix);
         if (in_array($prefix . '_setting', $tables)) {
             $version = DB::result(DB::query('SELECT val FROM ' . DB::escIdt($prefix . '_setting') . ' WHERE var=' . DB::val('dbversion')));
@@ -815,9 +768,9 @@ class MigrationDatabaseStep extends Step
 
     private function checkMinimalDatabaseVersion(): bool
     {
-        $prefix = Config::$config['db.prefix'];
+        $prefix = $this->config['db.prefix'];
 
-        DB::query('USE ' . DB::escIdt(Config::$config['db.name']));
+        DB::query('USE ' . DB::escIdt($this->config['db.name']));
         $tables = DB::getTablesByPrefix($prefix);
         if (in_array($prefix . '-settings', $tables)) {
             $version = DB::result(DB::query('SELECT val FROM ' . DB::escIdt($prefix . '-settings') . ' WHERE var=' . DB::val('dbversion')));
@@ -833,7 +786,7 @@ class MigrationDatabaseStep extends Step
     {
         if ($this->existingTableNames === null) {
             $this->existingTableNames = DB::queryRows(
-                'SHOW TABLES FROM ' . DB::escIdt(Config::$config['db.name']) . ' LIKE ' . DB::val(Config::$config['db.prefix'] . '_%'),
+                'SHOW TABLES FROM ' . DB::escIdt($this->config['db.name']) . ' LIKE ' . DB::val($this->config['db.prefix'] . '_%'),
                 null,
                 0,
                 false,
@@ -849,7 +802,7 @@ class MigrationDatabaseStep extends Step
      */
     private function getTableNames(): array
     {
-        $prefix = Config::$config['db.prefix'] . '_';
+        $prefix = $this->config['db.prefix'] . '_';
 
         return array_map(function ($baseTableName) use ($prefix) {
             return $prefix . $baseTableName;
@@ -898,15 +851,12 @@ class CompleteStep extends Step
     }
 }
 
-// load configuration
-Config::load();
-
 // create step runner
 $stepRunner = new StepRunner([
-    new ChooseLanguageStep(),
-    new ConfigurationStep(),
-    new MigrationDatabaseStep(),
-    new CompleteStep(),
+    new ChooseLanguageStep($config),
+    new ConfigurationStep($config),
+    new MigrationDatabaseStep($config),
+    new CompleteStep($config),
 ]);
 
 // run
