@@ -30,11 +30,7 @@ abstract class PatchInstaller
         }
 
         $this->installed = null;
-
-        DB::transactional(function () {
-            $this->doInstall();
-        });
-
+        $this->doInstall();
         return $this->isInstalled();
     }
 
