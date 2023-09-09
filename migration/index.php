@@ -761,7 +761,7 @@ class MigrationDatabaseStep extends Step
         $tables = DB::getTablesByPrefix($prefix);
         if (in_array($prefix . '_setting', $tables)) {
             $version = DB::result(DB::query('SELECT val FROM ' . DB::escIdt($prefix . '_setting') . ' WHERE var=' . DB::val('dbversion')));
-            return ($version === 'sl8-001');
+            return ($version === 'sl8db-001');
         }
         return false;
     }
