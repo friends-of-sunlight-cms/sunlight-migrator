@@ -2,7 +2,7 @@ CREATE TABLE `sunlight_log` (
    `id` varchar(36) NOT NULL,
    `level` tinyint(4) NOT NULL,
    `category` VARCHAR(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-   `time` bigint(20) NOT NULL,
+   `time` decimal(19,6) NOT NULL,
    `message` TEXT COLLATE utf8mb4_unicode_ci NOT NULL,
    `method` VARCHAR(32) COLLATE utf8mb4_unicode_ci NULL,
    `url` VARCHAR(2048) COLLATE utf8mb4_unicode_ci NULL,
