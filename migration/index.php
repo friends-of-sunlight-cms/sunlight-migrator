@@ -14,6 +14,7 @@ use Sunlight\Util\StringGenerator;
 
 const CONFIG_PATH = __DIR__ . '/../config.php';
 
+require __DIR__ . '/class/IndexRemover.php';
 require __DIR__ . '/class/MigrationRunner.php';
 
 // bootstrap
@@ -692,6 +693,11 @@ class MigrationDatabaseStep extends Step
             // use database
             DB::query('USE '. DB::escIdt($this->config['db.name']));
 
+            // remove all indexes from all tables
+            $indexRemover = new IndexRemover(DB::getTablesByPrefix($this->config['db.prefix']));
+            $indexRemover->remove();
+
+            // migration
             $migrationRunner = new MigrationRunner();
             if(!$migrationRunner->isInstalled()){
                 $this->successfulMigration = $migrationRunner->install();

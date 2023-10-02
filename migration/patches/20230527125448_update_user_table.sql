@@ -24,8 +24,3 @@ ALTER TABLE `sunlight_user`
     DROP COLUMN `msn`,
     DROP COLUMN `icq`,
     DROP COLUMN `jabber`;
-
-ALTER TABLE `sunlight_user`
-    DROP INDEX `username`,
-    DROP INDEX `publicname`,
-    DROP INDEX `email`;

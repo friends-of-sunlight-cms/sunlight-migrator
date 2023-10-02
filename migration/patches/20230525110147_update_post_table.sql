@@ -7,6 +7,3 @@ ALTER TABLE `sunlight_post`
     CHANGE COLUMN `time` `time` BIGINT(20) NOT NULL,
     CHANGE COLUMN `ip` `ip` VARCHAR(45) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
     CHANGE COLUMN `bumptime` `bumptime` BIGINT(20) NOT NULL DEFAULT 0;
-
-ALTER TABLE `sunlight_post`
-    ADD FULLTEXT `search` (`subject`, `text`);

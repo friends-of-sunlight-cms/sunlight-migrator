@@ -62,5 +62,6 @@ class MigrationRunner extends PatchInstaller
         $this->loadSqlDump($path . '20230527202154_update_user_groups_data.sql');
         $this->loadSqlDump($path . '20230527210617_update_users_data.sql');
         $this->loadSqlDump($path . '20230527220030_convert_smiley_to_emoji.sql');
+        $this->loadSqlDump($path . '20231002220000_add_table_indexes.sql');
     }
 }

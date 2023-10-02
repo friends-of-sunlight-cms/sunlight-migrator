@@ -24,7 +24,3 @@ ALTER TABLE `sunlight_article`
     ADD `search_content` text COLLATE 'utf8mb4_unicode_ci' NOT NULL AFTER `content`,
     DROP COLUMN `keywords`,
     DROP COLUMN `infobox`;
-
-ALTER TABLE `sunlight_article` DROP INDEX `title_seo`;
-ALTER TABLE `sunlight_article` ADD KEY (`slug`);
-ALTER TABLE `sunlight_article` ADD FULLTEXT `search` (`title`, `description`, `search_content`);

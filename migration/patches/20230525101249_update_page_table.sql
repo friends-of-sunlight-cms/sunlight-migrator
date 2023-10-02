@@ -27,15 +27,3 @@ ALTER TABLE `sunlight_page`
     CHANGE COLUMN `var3` `var3` INT(11) NULL,
     CHANGE COLUMN `var4` `var4` INT(11) NULL,
     DROP COLUMN `keywords`;
-
-ALTER TABLE `sunlight_page`
-    DROP INDEX `title_seo`,
-    DROP INDEX `autotitle`,
-    DROP INDEX `intersection`,
-    ADD KEY (`show_heading`),
-    ADD KEY (`slug_abs`),
-    ADD KEY (`slug`),
-    ADD KEY (`node_parent`);
-
-ALTER TABLE `sunlight_page`
-    ADD FULLTEXT `search` (`title`, `heading`, `description`, `search_content`);

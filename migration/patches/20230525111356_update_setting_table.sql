@@ -4,9 +4,3 @@ ALTER TABLE `sunlight_setting`
     ADD COLUMN `preload` TINYINT(1) NOT NULL DEFAULT 0,
     ADD COLUMN `web` TINYINT(1) NOT NULL,
     ADD COLUMN `admin` TINYINT(1) NOT NULL;
-
-ALTER TABLE `sunlight_setting`
-    ADD KEY (`preload`),
-    ADD KEY (`web`),
-    ADD KEY (`admin`);
-
