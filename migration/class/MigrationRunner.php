@@ -36,7 +36,9 @@ class MigrationRunner extends PatchInstaller
     {
         $path = __DIR__ . DIRECTORY_SEPARATOR . '../patches/';
 
-        $this->loadSqlDump($path . '20230524091022_initial_change.sql');
+        // conversion to a prefix other than the default
+        $this->loadSqlDump($path . '20230524091022_initial_change.sql', 'sunlight', true);
+        // continue as standard
         $this->loadSqlDump($path . '20230524091100_change_engine.sql');
         $this->loadSqlDump($path . '20230524092152_update_article_table.sql');
         $this->loadSqlDump($path . '20230525092217_update_box_table.sql');

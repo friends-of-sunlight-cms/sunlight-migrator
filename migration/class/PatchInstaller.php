@@ -3,8 +3,9 @@
 namespace Sunlight\Migrator;
 
 use Sunlight\Database\Database as DB;
-use Sunlight\Database\DatabaseLoader;
 use Sunlight\Database\SqlReader;
+
+require __DIR__ . '/CustomDatabaseLoader.php';
 
 abstract class PatchInstaller
 {
@@ -46,8 +47,8 @@ abstract class PatchInstaller
      * Check that all given database tables exist
      *
      * @param string[] $tables list of table names (with prefixes)
-     * @throws \RuntimeException if only some tables exist
      * @return string[] list of missing tables
+     * @throws \RuntimeException if only some tables exist
      */
     protected function checkTables(array $tables): array
     {
@@ -98,13 +99,14 @@ abstract class PatchInstaller
      * @param string $path path to the .sql file
      * @param string|null $currentPrefix prefix that is used in the dump (null = do not replace)
      */
-    protected function loadSqlDump(string $path, ?string $currentPrefix = 'sunlight_'): void
+    protected function loadSqlDump(string $path, ?string $currentPrefix = 'sunlight_', bool $fromOld = false): void
     {
-        DatabaseLoader::load(
+        $newPrefix = $fromOld ? substr_replace(DB::$prefix, '', -1) : DB::$prefix;
+        CustomDatabaseLoader::load(
             SqlReader::fromFile($path),
             $currentPrefix,
             $currentPrefix !== null
-                ? DB::$prefix
+                ? $newPrefix
                 : null
         );
     }
