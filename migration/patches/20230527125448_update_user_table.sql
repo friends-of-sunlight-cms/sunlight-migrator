@@ -17,7 +17,7 @@ ALTER TABLE `sunlight_user`
     CHANGE COLUMN `ip` `ip` VARCHAR(45) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
     CHANGE COLUMN `email` `email` VARCHAR(191) COLLATE utf8mb4_unicode_ci NOT NULL,
     CHANGE COLUMN `avatar` `avatar` VARCHAR(32) COLLATE utf8mb4_unicode_ci NULL,
-    CHANGE COLUMN `note` `note` TEXT COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+    CHANGE COLUMN `note` `note` TEXT COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (''),
     DROP COLUMN `avatar_mode`,
     DROP COLUMN `web`,
     DROP COLUMN `skype`,
