@@ -1,6 +1,6 @@
 ALTER TABLE `sunlight_page`
     CHANGE COLUMN `title_seo` `slug` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    CHANGE COLUMN `intersectionperex` `perex` TEXT COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (''),
+    CHANGE COLUMN `intersectionperex` `perex` TEXT COLLATE utf8mb4_unicode_ci NOT NULL,
     CHANGE COLUMN `autotitle` `show_heading` TINYINT(1) NOT NULL DEFAULT 1,
     CHANGE COLUMN `intersection` `node_parent` INT(11) NULL;
 
@@ -12,7 +12,7 @@ ALTER TABLE `sunlight_page`
     ADD COLUMN `node_level` INT(11) NOT NULL DEFAULT 0 AFTER `node_parent`,
     ADD COLUMN `node_depth` INT(11) NOT NULL DEFAULT 0 AFTER `node_level`,
     CHANGE COLUMN `ord` `ord` INT(11) NOT NULL DEFAULT 0,
-    CHANGE COLUMN `content` `content` MEDIUMTEXT COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (''),
+    CHANGE COLUMN `content` `content` MEDIUMTEXT COLLATE utf8mb4_unicode_ci NOT NULL,
     CHANGE COLUMN `visible` `visible` TINYINT(1) NOT NULL DEFAULT 1,
     CHANGE COLUMN `public` `public` TINYINT(1) NOT NULL DEFAULT 1,
     ADD COLUMN `level_inherit` TINYINT(1) NOT NULL DEFAULT 0 AFTER `level`,

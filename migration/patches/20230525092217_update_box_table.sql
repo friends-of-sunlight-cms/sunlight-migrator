@@ -4,7 +4,7 @@ ALTER TABLE `sunlight_box`
 ALTER TABLE `sunlight_box`
     CHANGE COLUMN `ord` `ord` INT(11) NOT NULL DEFAULT 0,
     CHANGE COLUMN `title` `title` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-    CHANGE COLUMN `content` `content` MEDIUMTEXT COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (''),
+    CHANGE COLUMN `content` `content` MEDIUMTEXT COLLATE utf8mb4_unicode_ci NOT NULL,
     CHANGE COLUMN `visible` `visible` TINYINT(1) NOT NULL DEFAULT 1,
     CHANGE COLUMN `public` `public` TINYINT(1) NOT NULL DEFAULT 1,
     ADD COLUMN `level` INT(11) NOT NULL DEFAULT 0 AFTER `public`,
