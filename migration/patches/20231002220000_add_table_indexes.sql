@@ -85,7 +85,7 @@ ALTER TABLE `sunlight_user`
     ADD UNIQUE KEY (`username`),
     ADD UNIQUE KEY (`email`),
     ADD UNIQUE KEY (`publicname`),
-    ADD KEY (`group_id`),
+    ADD KEY `group` (`group_id`),
     ADD KEY (`logincounter`),
     ADD KEY (`registertime`),
     ADD KEY (`activitytime`),
