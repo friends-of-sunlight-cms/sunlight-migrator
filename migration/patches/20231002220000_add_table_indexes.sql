@@ -34,16 +34,6 @@ ALTER TABLE `sunlight_iplog`
     ADD KEY (`time`),
     ADD KEY (`var`);
 
-ALTER TABLE `sunlight_log`
-    ADD KEY (`level`),
-    ADD KEY (`category`),
-    ADD KEY (`time`),
-    ADD KEY (`message`(255)),
-    ADD KEY (`method`),
-    ADD KEY (`url`(255)),
-    ADD KEY (`ip`),
-    ADD KEY (`user_id`);
-
 ALTER TABLE `sunlight_page`
     ADD KEY (`level`),
     ADD KEY (`type`),
