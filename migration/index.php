@@ -245,7 +245,7 @@ class StepRunner
     function run(): ?string
     {
         $this->current = null;
-        $submittedNumber = (int)Request::post('step_number', 0);
+        $submittedNumber = (int) Request::post('step_number', 0);
 
         // gather vars
         $vars = [];
@@ -677,7 +677,7 @@ class MigrationDatabaseStep extends Step
 
     protected function doSubmit(): void
     {
-        $confirmedMigration = (bool)Request::post('confirm_migration', false);
+        $confirmedMigration = (bool) Request::post('confirm_migration', false);
 
         $isMigrated = $this->isDatabaseMigrated();
 
@@ -696,7 +696,7 @@ class MigrationDatabaseStep extends Step
         // migrate the database
         if (empty($this->errors)) {
             // use database
-            DB::query('USE '. DB::escIdt($this->config['db.name']));
+            DB::query('USE ' . DB::escIdt($this->config['db.name']));
 
             // remove all indexes from all tables
             $indexRemover = new IndexRemover(DB::getTablesByPrefix($this->config['db.prefix']));
@@ -704,7 +704,7 @@ class MigrationDatabaseStep extends Step
 
             // migration
             $migrationRunner = new MigrationRunner();
-            if(!$migrationRunner->isInstalled()){
+            if (!$migrationRunner->isInstalled()) {
                 $this->successfulMigration = $migrationRunner->install();
             } else {
                 $this->successfulMigration = true;
@@ -712,11 +712,10 @@ class MigrationDatabaseStep extends Step
         }
 
         // after migration
-        if($this->successfulMigration) {
+        if ($this->successfulMigration) {
             // update page tree
             Page::getTreeManager()->refresh();
         }
-
     }
 
     function isSubmittable(): bool
@@ -739,25 +738,25 @@ class MigrationDatabaseStep extends Step
         $isMigrated = $this->isDatabaseMigrated();
         ?>
         <?php if ($isMigrated): ?>
-        <p class="msg warning"><?php Labels::render('migration.error.completed') ?></p>
-    <?php endif ?>
+            <p class="msg warning"><?php Labels::render('migration.error.completed') ?></p>
+        <?php endif ?>
         <?php if (!$isMigrated && !$validDbVersion): ?>
-        <p class="msg warning"><?php Labels::render('migration.error.dbversion') ?></p>
-    <?php endif ?>
+            <p class="msg warning"><?php Labels::render('migration.error.dbversion') ?></p>
+        <?php endif ?>
         <?php if (!$this->isDatabaseMigrated() && $validDbVersion): ?>
-        <fieldset>
-            <legend><?php Labels::render('migration.confirmation') ?></legend>
-            <p class="msg warning"><?php Labels::render('migration.confirmation.text') ?></p>
-            <p>
-                <label>
-                    <?= Form::input('checkbox', 'confirm_migration', '1', [
-                        'checked' => Form::loadCheckbox('confirm_migration', false, $this->getFormKeyVar()),
-                    ]) ?>
-                    <?php Labels::render('migration.confirmation.allow' ) ?>
-                </label>
-            </p>
-        </fieldset>
-    <?php endif ?>
+            <fieldset>
+                <legend><?php Labels::render('migration.confirmation') ?></legend>
+                <p class="msg warning"><?php Labels::render('migration.confirmation.text') ?></p>
+                <p>
+                    <label>
+                        <?= Form::input('checkbox', 'confirm_migration', '1', [
+                            'checked' => Form::loadCheckbox('confirm_migration', false, $this->getFormKeyVar()),
+                        ]) ?>
+                        <?php Labels::render('migration.confirmation.allow' ) ?>
+                    </label>
+                </p>
+            </fieldset>
+        <?php endif ?>
         <?php
     }
 
@@ -881,7 +880,7 @@ try {
     ob_start();
     ?>
     <h2><?php Labels::render('step.exception') ?></h2>
-    <pre><?= _e((string)$e) ?></pre>
+    <pre><?= _e((string) $e) ?></pre>
     <?php
     $content = ob_get_clean();
 }
