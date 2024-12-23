@@ -62,7 +62,7 @@ abstract class Labels
             'step.exception' => 'Chyba',
 
             'config.title' => 'Konfigurace systému',
-            'config.text' => 'Tento krok vygeneruje / přepíše soubor phinx.yaml.',
+            'config.text' => 'Tento krok vygeneruje / přepíše soubor config.php',
             'config.error.db.port.invalid' => 'neplatný port',
             'config.error.db.name.empty' => 'název databáze nesmí být prázdný',
             'config.error.db.prefix.empty' => 'prefix nesmí být prázdný',
@@ -110,7 +110,7 @@ abstract class Labels
             'step.exception' => 'Error',
 
             'config.title' => 'System configuration',
-            'config.text' => 'This step will generate / overwrite the phinx.yaml file.',
+            'config.text' => 'This step will generate / overwrite the config file.',
             'config.error.db.port.invalid' => 'invalid port',
             'config.error.db.name.empty' => 'database name must not be empty',
             'config.error.db.prefix.empty' => 'prefix must not be empty',
@@ -312,15 +312,20 @@ class StepRunner
                     <a class="btn btn-lg" id="start-over" href="<?= Core::getBaseUrl() ?>/migration/"><?php Labels::render('step.reset') ?></a>
                 <?php endif ?>
                 <?php if ($step->isSubmittable()): ?>
-                    <input id="submit" name="step_submit" type="submit" value="<?php Labels::render('step.submit') ?>" class="continue_<?=$step->getMainLabelKey(); ?>">
-                    <input type="hidden" name="<?= $step->getFormKeyVar() ?>" value="1">
-                    <input type="hidden" name="step_number" value="<?= $step->getNumber() ?>">
+                    <?= Form::input('submit', 'step_submit', Labels::get('step.submit'), [
+                        'id' => 'submit',
+                        'class' => 'continue_' . $step->getMainLabelKey(),
+                    ]) ?>
+                    <?= Form::input('hidden', $step->getFormKeyVar(), '1') ?>
+                    <?= Form::input('hidden', 'step_number', $step->getNumber()) ?>
+
+
                     <script type="application/javascript">
                         const form = document.querySelector('form');
                         function handleSubmit(event) {
                             const button = form.querySelector('.continue_migration');
                             button.disabled = true;
-                            button.value = '<?php Labels::render('migration.button.processing'); ?>';
+                            button.value = '<?= Labels::get('migration.button.processing'); ?>';
                             button.style.cursor = 'wait';
                         }
                         form.addEventListener('submit', handleSubmit);
@@ -330,7 +335,7 @@ class StepRunner
 
             <?php foreach ($vars as $name => $value): ?>
                 <?php if ($value !== null): ?>
-                    <input type="hidden" name="<?= _e($name) ?>" value="<?= _e($value) ?>">
+                    <?= Form::input('hidden', $name, $value) ?>
                 <?php endif ?>
             <?php endforeach ?>
         </form>
@@ -355,13 +360,13 @@ abstract class Step
     protected $submitted = false;
     /** @var array */
     protected $errors = [];
-   /** @var ConfigurationFile */
-   protected $config;
+    /** @var ConfigurationFile */
+    protected $config;
 
-   function __construct(ConfigurationFile $config)
-   {
-       $this->config = $config;
-   }
+    function __construct(ConfigurationFile $config)
+    {
+        $this->config = $config;
+    }
 
     abstract function getMainLabelKey(): string;
 
@@ -493,8 +498,8 @@ class ChooseLanguageStep extends Step
     {
         ?>
         <ul class="big-list nobullets">
-            <li><label><input type="radio" name="language" value="cs" checked> Čeština</label></li>
-            <li><label><input type="radio" name="language" value="en"> English</label></li>
+            <li><label><?= Form::input('radio', 'language', 'cs', ['checked' => true]) ?> Čeština</label></li>
+            <li><label><?= Form::input('radio', 'language', 'en') ?> English</label></li>
         </ul>
         <?php
     }
@@ -603,32 +608,32 @@ class ConfigurationStep extends Step
             <table>
                 <tr>
                     <th><?php Labels::render('config.db.server') ?></th>
-                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_server', $this->config['db.server']) ?>></td>
+                    <td><?= Form::input('text', 'config_db_server', Request::post('config_db_server', $this->config['db.server'])) ?></td>
                     <td class="help"><?php Labels::render('config.db.server.help') ?></td>
                 </tr>
                 <tr>
                     <th><?php Labels::render('config.db.port') ?></th>
-                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_port', $this->config['db.port']) ?>></td>
+                    <td><?= Form::input('text', 'config_db_port', Request::post('config_db_port', $this->config['db.port'])) ?></td>
                     <td class="help"><?php Labels::render('config.db.port.help') ?></td>
                 </tr>
                 <tr>
                     <th><?php Labels::render('config.db.user') ?></th>
-                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_user', $this->config['db.user']) ?>></td>
+                    <td><?= Form::input('text', 'config_db_user', Request::post('config_db_user', $this->config['db.user'])) ?></td>
                     <td class="help"><?php Labels::render('config.db.user.help') ?></td>
                 </tr>
                 <tr>
                     <th><?php Labels::render('config.db.password') ?></th>
-                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_password') ?>></td>
+                    <td><?= Form::input('text', 'config_db_password', Request::post('config_db_password')) ?></td>
                     <td class="help"><?php Labels::render('config.db.password.help') ?></td>
                 </tr>
                 <tr>
                     <th><?php Labels::render('config.db.name') ?></th>
-                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_name', $this->config['db.name']) ?>></td>
+                    <td><?= Form::input('text', 'config_db_name', Request::post('config_db_name', $this->config['db.name'])) ?></td>
                     <td class="help"><?php Labels::render('config.db.name.help') ?></td>
                 </tr>
                 <tr>
                     <th><?php Labels::render('config.db.prefix') ?></th>
-                    <td><input type="text"<?= Form::restorePostValueAndName('config_db_prefix', $this->config['db.prefix']) ?>></td>
+                    <td><?= Form::input('text', 'config_db_prefix', Request::post('config_db_prefix', $this->config['db.prefix'])) ?></td>
                     <td class="help"><?php Labels::render('config.db.prefix.help') ?></td>
                 </tr>
             </table>
@@ -733,10 +738,10 @@ class MigrationDatabaseStep extends Step
         $validDbVersion = $this->checkMinimalDatabaseVersion();
         $isMigrated = $this->isDatabaseMigrated();
         ?>
-    <?php if ($isMigrated): ?>
+        <?php if ($isMigrated): ?>
         <p class="msg warning"><?php Labels::render('migration.error.completed') ?></p>
     <?php endif ?>
-    <?php if (!$isMigrated && !$validDbVersion): ?>
+        <?php if (!$isMigrated && !$validDbVersion): ?>
         <p class="msg warning"><?php Labels::render('migration.error.dbversion') ?></p>
     <?php endif ?>
         <?php if (!$this->isDatabaseMigrated() && $validDbVersion): ?>
@@ -745,8 +750,10 @@ class MigrationDatabaseStep extends Step
             <p class="msg warning"><?php Labels::render('migration.confirmation.text') ?></p>
             <p>
                 <label>
-                    <input type="checkbox"<?= Form::restoreCheckedAndName($this->getFormKeyVar(), 'confirm_migration') ?>>
-                    <?php Labels::render('migration.confirmation.allow') ?>
+                    <?= Form::input('checkbox', 'confirm_migration', '1', [
+                        'checked' => Form::loadCheckbox('confirm_migration', false, $this->getFormKeyVar()),
+                    ]) ?>
+                    <?php Labels::render('migration.confirmation.allow' ) ?>
                 </label>
             </p>
         </fieldset>
@@ -767,7 +774,7 @@ class MigrationDatabaseStep extends Step
         $tables = DB::getTablesByPrefix($prefix);
         if (in_array($prefix . '_setting', $tables)) {
             $version = DB::result(DB::query('SELECT val FROM ' . DB::escIdt($prefix . '_setting') . ' WHERE var=' . DB::val('dbversion')));
-            return ($version === 'sl8db-001');
+            return ($version === 'sl8db-002');
         }
         return false;
     }

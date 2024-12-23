@@ -31,7 +31,7 @@ UPDATE `sunlight_setting` SET `var`='artviewexpire' WHERE `var`='artreadexpire';
 
 DELETE FROM `sunlight_setting` WHERE `var` IN ('printart', 'extend_enabled', 'ajaxfm', 'wysiwyg', 'codemirror', 'lightbox', 'url', 'banned', 'keywords', 'proxy_mode', 'rss', 'rsslimit', 'modrewrite', 'smileys', 'postsendexpire', 'adminscheme_mode');
 
-UPDATE `sunlight_setting` SET `val`='sl8db-001' WHERE `var`='dbversion';
+UPDATE `sunlight_setting` SET `val`='sl8db-002' WHERE `var`='dbversion';
 UPDATE `sunlight_setting` SET `val`=(SELECT * FROM (SELECT `val` FROM `sunlight_setting` WHERE `var` = 'article_pic_w') AS mysql_sucks) WHERE `var`='article_pic_thumb_w';
 UPDATE `sunlight_setting` SET `val`=(SELECT * FROM (SELECT `val` FROM `sunlight_setting` WHERE `var` = 'article_pic_h') AS mysql_sucks) WHERE `var`='article_pic_thumb_h';
 UPDATE `sunlight_setting` SET `val`=`val` * 3 WHERE `var` IN ('article_pic_w', 'article_pic_h');
