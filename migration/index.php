@@ -12,6 +12,15 @@ use Sunlight\Util\Form;
 use Sunlight\Util\Request;
 use Sunlight\Util\StringGenerator;
 
+// check PHP version
+$requiredVersion = '7.1.0';
+$currentVersion = phpversion();
+if (version_compare($currentVersion, $requiredVersion, '<')) {
+    echo "This script requires PHP version $requiredVersion or higher. Your PHP version: " . $currentVersion . ".<br>";
+    echo "Tento skript vyžaduje PHP verzi $requiredVersion nebo vyšší. Vaše verze PHP: " . $currentVersion . ".";
+    die();
+}
+
 const CONFIG_PATH = __DIR__ . '/../config.php';
 
 require __DIR__ . '/class/IndexRemover.php';
