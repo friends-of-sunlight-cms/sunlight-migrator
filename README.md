@@ -1,7 +1,7 @@
 About Migrator
 --------------
 
-Migrator is a [community](https://github.com/friends-of-sunlight-cms/) tool that was created to facilitate the migration from SunLight CMS 7.5.3 - 7.5.5 to 8.0. Keep in mind that Migrator may not be fully functional on all site installations. Unofficial changes and interventions in the system database, or changes using plugins, may cause the migration process to fail. **Backup the project, including the database, before performing the migration.**
+Migrator is a [community](https://github.com/friends-of-sunlight-cms/) tool that was created to facilitate the migration from SunLight CMS 7.5.3 - 7.5.5 to 8.x. Keep in mind that Migrator may not be fully functional on all site installations. Unofficial changes and interventions in the system database, or changes using plugins, may cause the migration process to fail. **Backup the project, including the database, before performing the migration.**
 
 Migration
 ---------
